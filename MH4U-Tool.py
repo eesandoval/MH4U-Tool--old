@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3 as sql
 import tkinter as tk
 
 class Application(tk.Frame):
@@ -33,11 +33,14 @@ class Application(tk.Frame):
     def calculateDamage(self):
         weapon = self.chosenWeapon.get()
         print("You chose sharpness level", self.chosenSharpness.get())
-        for row in c.execute("SELECT * FROM ChargeBlades WHERE name='" + weapon + "'"):
-            print(row)
+        c.execute("SELECT * FROM ChargeBlades WHERE name='" + weapon + "'")
+        row = c.fetchone()
+        print((row['attack'] * (1 + 0.25 * row['affinity']) *
+              0.2 * 0.35 * 1.44) + (row['special attack']/100 * 0.2 * 1.2))
 
 if __name__ == '__main__':
-    conn = sqlite3.connect("MH4U.db")
+    conn = sql.connect("MH4U.db")
+    conn.row_factory = sql.Row
     c = conn.cursor()
     root = tk.Tk()
     app = Application(master=root)
