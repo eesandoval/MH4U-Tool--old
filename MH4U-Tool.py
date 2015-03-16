@@ -27,6 +27,11 @@ class Application(tk.Frame):
         self.attackMultipliers = {"HH AuS":1.10, "HH AuL":1.15,
                                   "Adrenaline+2":1.30, "Felyne Heroics":1.35,
                                   "Fortify Cartx1":1.1, "Fortify Cartx2":1.21, "None":1}
+        self.weaponAffinityMultipliers = {"Hammers":0.25, "HuntingHorns":0.25, "SwitchAxes":0.25,
+                                          "GreatSwords":0.2, "ChargeBlades":0.25, "LongSwords":0.25,
+                                          "InsectGlaives":0.25, "Lances":0.25, "Gunlances":0.25,
+                                          "HeavyBowguns":0.25, "SwordnShields":0.35, "DualBlades":0.35,
+                                          "LightBowguns":0.25, "Bow":0.35}
 
         self.elementMultipliers = {"Element+1":1.05, "Element+2":1.10, "Element+3":1.15, "None":1}
         self.elementAdditions = {"Element+1":40, "Element+2":60, "Element+3":90, "None":0}
@@ -106,6 +111,9 @@ class Application(tk.Frame):
         c = tk.Checkbutton(self, text="HH Replay", variable=self.HHReplay)
         c.grid(row=self.lastRow, column=6, sticky="w")
 
+        self.elementHHBuff = tk.IntVar()
+        c = tk.Checkbutton(self, text="HH Element", variable=self.elementHHBuff)
+        c.grid(row=self.lastRow, column=7, sticky="w")
 
     def createText(self):
         self.rawText = tk.StringVar()
@@ -138,6 +146,7 @@ class Application(tk.Frame):
         affinity = row['affinity']
         trueRaw = row['attack']/self.modifiers['ChargeBlades']
         rawHitzone = 0.45
+        weaponAffinityMultiplier = self.weaponAffinityMultipliers['ChargeBlades']
 
         if (self.chosenGlove.get() == "Latent Power+1"):
             affinity += 0.30
@@ -160,10 +169,20 @@ class Application(tk.Frame):
 
         trueRaw += self.attackAdditions[self.chosenMight.get()]
 
-        trueElement = trueElement * self.elementMultipliers[self.chosenElementUp.get()] + self.elementAdditions[self.chosenElementUp.get()]
+        elementMultiplier = self.elementMultipliers[self.chosenElementUp.get()]
 
         if (self.elementAtkUp.get() == 1):
-            trueElement *= 1.1
+            elementMultiplier *= 1.1
+
+        if (self.elementHHBuff.get() == 1 and self.HHReplay.get() == 1):
+            elementMultiplier *= 1.1
+        elif (self.elementHHBuff.get() == 1):
+            elementMultiplier *= 1.08
+
+        if (elementMultiplier > 1.2):
+            elementMultiplier = 1.2
+
+        trueElement = trueElement * elementMultiplier  + self.elementAdditions[self.chosenElementUp.get()]
 
         if (self.powerCharm.get() == 1):
             trueRaw += 6
