@@ -35,21 +35,37 @@ class Application(tk.Frame):
         self.calculateButton = tk.Button(self, text="Calculate!", command=self.calculateDamage)
         self.calculateButton.grid(row=0, sticky="w")
         self.createList()
-        self.createKitchenButtons()
-        self.createMightButtons()
-        self.createDangerBuffButtons()
-        self.createFortifyButtons()
-        self.createHHBuffButtons()
-        self.createElementUpButtons()
-        self.createAttackButtons()
-        self.createAffinityButtons()
-        self.createGloveButtons()
+        self.chosenGlove = tk.StringVar()
+        self.chosenAttack = tk.StringVar()
+        self.chosenCriticalEye = tk.StringVar()
+        self.chosenKitchen = tk.StringVar()
+        self.chosenMight = tk.StringVar()
+        self.chosenHHBuff = tk.StringVar()
+        self.chosenDanger = tk.StringVar()
+        self.chosenFortify = tk.StringVar()
+        self.chosenElementUp = tk.StringVar()
+        self.createButtons(self.chosenKitchen, ["None", "Kitchen Attack Small", "Kitchen Attack Large"])
+        self.createButtons(self.chosenMight, ["None", "Might Seed", "Might Pill"])
+        self.createButtons(self.chosenHHBuff, ["None", "HH AuS", "HH AuL"])
+        self.createButtons(self.chosenDanger, ["None", "Adrenaline+2", "Felyne Heroics"])
+        self.createButtons(self.chosenFortify, ["None", "Fortify Cartx1", "Fortify Cartx2"])
+        self.createButtons(self.chosenElementUp, ["None", "Element+1", "Element+2", "Element+3"])
+        self.createButtons(self.chosenAttack, ["None", "AuS", "AuM", "AuL", "AuXL"])
+        self.createButtons(self.chosenCriticalEye, ["None", "CE+1", "CE+2", "CE+3", "Critical God"])
+        self.createButtons(self.chosenGlove, ["None", "Peak Performance", "Latent Power+1", "Latent Power+2", "Challenger+1", "Challenger+2"])
         self.createText()
         self.createMiscButtons()
 
-    def createTextLabels(self, r, t):
-        l = tk.Label(self, text=t)
-        l.grid(row=r, column=self.column, sticky="w")
+    def createButtons(self, strVar, lst):
+        r = 0
+        strVar.set(lst[0])
+        for item in lst:
+            b = tk.Radiobutton(self, text = item, variable = strVar, value = item)
+            b.grid(row=r, column=self.column, sticky="w")
+            r += 1
+        self.column += 1
+        if (r > self.lastRow):
+            self.lastRow = r
 
     def createList(self):
         optionList = []
@@ -60,131 +76,6 @@ class Application(tk.Frame):
         weaponsMenu = tk.OptionMenu(self, self.chosenWeapon, *optionList)
         weaponsMenu.grid(row=0, column=self.column, sticky="w")
         self.column += 1
-            
-    def createGloveButtons(self):
-        r = 0
-        self.chosenGlove = tk.StringVar()
-        gloves = ["None", "Peak Performance", "Latent Power+1", "Latent Power+2", "Challenger+1", "Challenger+2"]
-        self.chosenGlove.set("None")
-        for glove in gloves:
-            b = tk.Radiobutton(self, text = glove, variable = self.chosenGlove, value = glove)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createAttackButtons(self):
-        r = 0
-        self.chosenAttack = tk.StringVar()
-        attacks = ["None", "AuS", "AuM", "AuL", "AuXL"]
-        self.chosenAttack.set("None")
-        for attack in attacks:
-            b = tk.Radiobutton(self, text = attack, variable = self.chosenAttack, value = attack)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createAffinityButtons(self):
-        r = 0
-        self.chosenCriticalEye = tk.StringVar()
-        criticalEyes = ["None", "CE+1", "CE+2", "CE+3", "Critical God"]
-        self.chosenCriticalEye.set("None")
-        for criticalEye in criticalEyes:
-            b = tk.Radiobutton(self, text = criticalEye, variable = self.chosenCriticalEye, value = criticalEye)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createKitchenButtons(self):
-        r = 0
-        self.chosenKitchen = tk.StringVar()
-        kitchenSkills = ["None", "Kitchen Attack Small", "Kitchen Attack Large"]
-        self.chosenKitchen.set("None")
-        for kitchenSkill in kitchenSkills:
-            b = tk.Radiobutton(self, text = kitchenSkill, variable = self.chosenKitchen, value = kitchenSkill)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createMightButtons(self):
-        r = 0
-        self.chosenMight = tk.StringVar()
-        mightItems = ["None", "Might Seed", "Might Pill"]
-        self.chosenMight.set("None")
-        for mightItem in mightItems:
-            b = tk.Radiobutton(self, text = mightItem, variable = self.chosenMight, value = mightItem)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createHHBuffButtons(self):
-        r = 0
-        self.chosenHHBuff = tk.StringVar()
-        self.HHReplay = tk.IntVar()
-        HHBuffs = ["None", "HH AuS", "HH AuL"]
-        self.chosenHHBuff.set("None")
-        for HHBuff in HHBuffs:
-            b = tk.Radiobutton(self, text = HHBuff, variable = self.chosenHHBuff, value = HHBuff)
-            b.grid(row=r, column = self.column, sticky = "w")
-            r += 1
-        c = tk.Checkbutton(self, text = "Replay", variable = self.HHReplay)
-        c.grid(row=r, column=self.column, sticky="w")
-        r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createDangerBuffButtons(self):
-        r = 0
-        self.chosenDanger = tk.StringVar()
-        dangerBuffs = ["None", "Adrenaline+2", "Felyne Heroics"]
-        self.chosenDanger.set("None")
-        for dangerBuff in dangerBuffs:
-            b = tk.Radiobutton(self, text = dangerBuff, variable = self.chosenDanger, value = dangerBuff)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createFortifyButtons(self):
-        r = 0
-        self.chosenFortify = tk.StringVar()
-        fortifyBuffs = ["None", "Fortify Cartx1", "Fortify Cartx2"]
-        self.chosenFortify.set("None")
-        for fortifyBuff in fortifyBuffs:
-            b = tk.Radiobutton(self, text = fortifyBuff, variable = self.chosenFortify, value = fortifyBuff)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
-
-    def createElementUpButtons(self):
-        r = 0
-        self.chosenElementUp = tk.StringVar()
-        self.elementAtkUp = tk.IntVar()
-        elementBuffs = ["None", "Element+1", "Element+2", "Element+3"]
-        self.chosenElementUp.set("None")
-        for elementBuff in elementBuffs:
-            b = tk.Radiobutton(self, text = elementBuff, variable = self.chosenElementUp, value = elementBuff)
-            b.grid(row=r, column=self.column, sticky="w")
-            r += 1
-        c = tk.Checkbutton(self, text = "Element Atk Up", variable = self.elementAtkUp)
-        c.grid(row=r, column=self.column, sticky="w")
-        r += 1
-        self.column += 1
-        if (r > self.lastRow):
-            self.lastRow = r
 
     def createMiscButtons(self):
         self.sharpness = tk.IntVar()
@@ -206,6 +97,14 @@ class Application(tk.Frame):
         self.criticalDraw = tk.IntVar()
         c = tk.Checkbutton(self, text="Critical Draw", variable=self.criticalDraw)
         c.grid(row=self.lastRow, column=4, sticky="w")
+
+        self.elementAtkUp = tk.IntVar()
+        c = tk.Checkbutton(self, text="Element Atk Up", variable=self.elementAtkUp)
+        c.grid(row=self.lastRow, column=5, sticky="w")
+
+        self.HHReplay = tk.IntVar()
+        c = tk.Checkbutton(self, text="HH Replay", variable=self.HHReplay)
+        c.grid(row=self.lastRow, column=6, sticky="w")
 
 
     def createText(self):
