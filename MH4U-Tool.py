@@ -7,7 +7,6 @@ class Application(tk.Frame):
         self.grid()
         self.column = 1
         self.lastRow = 0
-        self.createWidgets()
         self.modifiers = {"Hammers":5.2, "HuntingHorns":5.2, "SwitchAxes":5.4,
                           "GreatSwords":4.2, "ChargeBlades":3.6, "LongSwords":3.3,
                           "InsectGlaives":3.1, "Lances":2.3, "Gunlances":2.3,
@@ -35,11 +34,15 @@ class Application(tk.Frame):
 
         self.elementMultipliers = {"Element+1":1.05, "Element+2":1.10, "Element+3":1.15, "None":1}
         self.elementAdditions = {"Element+1":40, "Element+2":60, "Element+3":90, "None":0}
+        self.createWidgets()
 
     def createWidgets(self):
         self.calculateButton = tk.Button(self, text="Calculate!", command=self.calculateDamage)
         self.calculateButton.grid(row=0, sticky="w")
-        self.createList()
+        self.refreshButton = tk.Button(self, text="Refresh", command=self.refreshWidgets)
+        self.refreshButton.grid(row=1, sticky="w")
+        self.createWeaponTypeList()
+        self.createWeaponList()
         self.chosenGlove = tk.StringVar()
         self.chosenAttack = tk.StringVar()
         self.chosenCriticalEye = tk.StringVar()
@@ -61,6 +64,19 @@ class Application(tk.Frame):
         self.createText()
         self.createMiscButtons()
 
+    def refreshWidgets(self):
+        try:
+            self.weaponsMenu.destroy()
+            oldColumn = self.column
+            self.column = 1
+            self.createWeaponList()
+            self.column = oldColumn
+        except:
+            oldColumn = self.column
+            self.column = 1
+            self.createWeaponList()
+            self.column = oldColumn
+
     def createButtons(self, strVar, lst):
         r = 0
         strVar.set(lst[0])
@@ -72,14 +88,26 @@ class Application(tk.Frame):
         if (r > self.lastRow):
             self.lastRow = r
 
-    def createList(self):
+    def createWeaponTypeList(self):
+        optionList = ["WeaponType"]
+        for weaponType in self.modifiers.keys():
+            optionList.append(weaponType)
+        self.chosenType = tk.StringVar()
+        self.chosenType.set(optionList[0])
+        weaponsTypeMenu = tk.OptionMenu(self, self.chosenType, *optionList)
+        weaponsTypeMenu.grid(row=0, column=self.column, sticky="w")
+
+    def createWeaponList(self):
         optionList = []
-        for row in c.execute('SELECT name FROM ChargeBlades'):
+        if (self.chosenType.get() == "WeaponType"):
+            self.column += 1
+            return
+        for row in c.execute("SELECT name FROM '" + self.chosenType.get() + "'"):
             optionList.append(row[0])
         self.chosenWeapon = tk.StringVar()
         self.chosenWeapon.set(optionList[0])
-        weaponsMenu = tk.OptionMenu(self, self.chosenWeapon, *optionList)
-        weaponsMenu.grid(row=0, column=self.column, sticky="w")
+        self.weaponsMenu = tk.OptionMenu(self, self.chosenWeapon, *optionList)
+        self.weaponsMenu.grid(row=1, column=self.column, sticky="w")
         self.column += 1
 
     def createMiscButtons(self):
@@ -132,7 +160,7 @@ class Application(tk.Frame):
         
     def calculateDamage(self):
         weapon = self.chosenWeapon.get()
-        c.execute("SELECT * FROM ChargeBlades WHERE name=\"" + weapon + "\"")
+        c.execute("SELECT * FROM \"" + self.chosenType.get() + "\" WHERE name=\"" + weapon + "\"")
         row = c.fetchone()
 
         if (self.sharpness.get() == 1):
